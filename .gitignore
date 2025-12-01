@@ -83,3 +83,4 @@ uploads/*
 *.md
 API_GUIDE.docx.txt
 env-config.txt
+*.sh
