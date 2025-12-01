@@ -6,8 +6,9 @@ services:
     image: mongo:7.0
     container_name: backend-node-mongodb
     restart: unless-stopped
-    ports:
-      - "27017:27017"
+    # Không expose port ra ngoài, chỉ dùng trong internal network
+    expose:
+      - "27017"
     environment:
       - MONGO_INITDB_DATABASE=englishdb_nodejs
     volumes:
@@ -45,8 +46,8 @@ services:
       - MONGO_URI=${MONGO_URI:-mongodb://mongodb:27017/englishdb_nodejs}
 
       # JWT Configuration (phải set trong .env)
-      - JWT_SECRET=${JWT_SECRET}
-      - REFRESH_SECRET=${REFRESH_SECRET}
+      - JWT_SECRET=${JWT_SECRET:-}
+      - REFRESH_SECRET=${REFRESH_SECRET:-${JWT_SECRET:-}}
       - JWT_ISS=${JWT_ISS:-gateway.api}
       - JWT_AUD=${JWT_AUD:-web.app}
 
@@ -66,7 +67,7 @@ services:
 
       # Security (phải set trong .env)
       - PWD_PEPPER=${PWD_PEPPER:-}
-      - SESSION_SECRET=${SESSION_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET:-${JWT_SECRET:-}}
 
       # CORS Configuration
       # Development: Để trống hoặc set "*" để cho phép tất cả
