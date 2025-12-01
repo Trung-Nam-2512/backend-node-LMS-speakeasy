@@ -34,8 +34,9 @@ services:
     env_file:
       - .env
     # Expose port ra ngoài để nginx trên host có thể kết nối
+    # Map port động: host_port:container_port (container port = PORT env)
     ports:
-      - "1444:1444"
+      - "${BACKEND_PORT:-1444}:${PORT:-1444}"
     environment:
       # Server Configuration (có thể override từ .env)
       - NODE_ENV=${NODE_ENV:-production}
@@ -43,7 +44,8 @@ services:
       - API_PREFIX=${API_PREFIX:-/api/v1}
 
       # Database Configuration
-      - MONGO_URI=${MONGO_URI:-mongodb://mongodb:27017/englishdb_nodejs}
+      # Force MongoDB URI for Docker (must use service name 'mongodb', not 'localhost')
+      - MONGO_URI=mongodb://mongodb:27017/englishdb_nodejs
 
       # JWT Configuration (phải set trong .env)
       - JWT_SECRET=${JWT_SECRET:-}
@@ -82,7 +84,7 @@ services:
     networks:
       - backend-network
     healthcheck:
-      test: [ "CMD", "node", "-e", "require('http').get('http://localhost:1444/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" ]
+      test: [ "CMD", "node", "-e", "const port = process.env.PORT || 1444; require('http').get(`http://localhost:${port}/health`, (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" ]
       interval: 30s
       timeout: 10s
       retries: 3

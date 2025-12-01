@@ -5,7 +5,8 @@ const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
 const passport = require('passport');
-const session = require('express-session');
+// Session removed - using JWT tokens instead, Google OAuth uses session: false
+// const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
 const rfs = require('rotating-file-stream');
@@ -97,20 +98,11 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Session configuration for passport
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
+// Session removed - not needed (using JWT tokens, Google OAuth uses session: false)
+// This prevents memory leaks from MemoryStore
 
-// Initialize passport
+// Initialize passport (only initialize, no session needed)
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Health check endpoint with MongoDB status
 app.get('/health', (_req, res) => {

@@ -2,7 +2,7 @@
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Try to load .env file
+// Try to load .env file (optional - in Docker, env vars are set via docker-compose)
 const envPath = path.join(__dirname, '..', '.env');
 const result = dotenv.config({
     path: envPath,
@@ -10,11 +10,11 @@ const result = dotenv.config({
     debug: false
 });
 
-// Only log errors, not successful loads (security)
-if (result.error) {
+// Only log errors if file exists but can't be read, not if file doesn't exist (normal in Docker)
+if (result.error && result.error.code !== 'ENOENT') {
     console.error('❌ Error loading .env file:', result.error.message);
 } else if (result.parsed && Object.keys(result.parsed).length === 0) {
-    console.warn('⚠️  .env file exists but no variables were loaded');
+    // Silent - empty .env is fine
 }
 const http = require('http');
 const app = require('./app');

@@ -143,7 +143,7 @@ const AuthController = {
             // Redirect to frontend with tokens or return JSON
             const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
             const redirectUrl = `${frontendUrl}/auth/callback?accessToken=${result.accessToken}&refreshToken=${result.refreshToken}`;
-            
+
             res.redirect(redirectUrl);
         } catch (error) {
             console.error('Google callback error:', error);
