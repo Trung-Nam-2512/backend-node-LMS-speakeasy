@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Auth Flow - Registration & Forgot Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-section h2 {
+            color: #ffd700;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .btn-test {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+        }
+        .btn-warning {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #4caf50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .error {
+            border-left: 4px solid #f44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+        .info {
+            border-left: 4px solid #2196f3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ffd700;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test Auth Flow - Registration & Forgot Password</h1>
+        
+        <div class="test-section">
+            <h2>📋 Hướng dẫn test</h2>
+            <div class="step">
+                <h3>Bước 1: Kiểm tra server</h3>
+                <p>Click "Test Server Health" để đảm bảo server đang chạy</p>
+            </div>
+            <div class="step">
+                <h3>Bước 2: Đăng ký tài khoản</h3>
+                <p>Nhập thông tin và click "Test Registration"</p>
+            </div>
+            <div class="step">
+                <h3>Bước 3: Test quên mật khẩu</h3>
+                <p>Nhập email đã đăng ký và click "Test Forgot Password"</p>
+            </div>
+            <div class="step">
+                <h3>Bước 4: Test đăng nhập</h3>
+                <p>Test đăng nhập với tài khoản đã tạo</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 Test Server Health</h2>
+            <button class="btn btn-test" onclick="testServerHealth()">Test Server Health</button>
+            <div id="serverResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>👤 Test Registration</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="regEmail" placeholder="test@example.com" value="testuser@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="regPassword" placeholder="Password123" value="Test123456">
+            </div>
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" id="regName" placeholder="Test User" value="Test User">
+            </div>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="regUsername" placeholder="testuser" value="testuser123">
+            </div>
+            <div class="form-group">
+                <label>Phone:</label>
+                <input type="text" id="regPhone" placeholder="0123456789" value="0123456789">
+            </div>
+            <button class="btn btn-success" onclick="testRegistration()">Test Registration</button>
+            <div id="regResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔑 Test Forgot Password</h2>
+            <div class="form-group">
+                <label>Email (đã đăng ký):</label>
+                <input type="email" id="forgotEmail" placeholder="test@example.com" value="testuser@example.com">
+            </div>
+            <button class="btn btn-warning" onclick="testForgotPassword()">Test Forgot Password</button>
+            <div id="forgotResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🚪 Test Login</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="loginEmail" placeholder="test@example.com" value="testuser@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="loginPassword" placeholder="Password123" value="Test123456">
+            </div>
+            <button class="btn btn-test" onclick="testLogin()">Test Login</button>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📧 Test Reset Password (Mock)</h2>
+            <div class="form-group">
+                <label>Reset Token (từ email):</label>
+                <input type="text" id="resetToken" placeholder="Nhập token từ email" value="mock-token-123">
+            </div>
+            <div class="form-group">
+                <label>New Password:</label>
+                <input type="password" id="newPassword" placeholder="NewPassword123" value="NewPassword123">
+            </div>
+            <button class="btn btn-test" onclick="testResetPassword()">Test Reset Password</button>
+            <div id="resetResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api/v1';
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.textContent = message;
+        }
+
+        async function testServerHealth() {
+            try {
+                showResult('serverResult', '🔄 Testing server health...', 'info');
+                
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('serverResult', `✅ Server is running!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('serverResult', `❌ Server error: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('serverResult', `❌ Connection failed: ${error.message}\n\nMake sure server is running on port 3000`, 'error');
+            }
+        }
+
+        async function testRegistration() {
+            try {
+                showResult('regResult', '🔄 Testing user registration...', 'info');
+                
+                const userData = {
+                    email: document.getElementById('regEmail').value,
+                    password: document.getElementById('regPassword').value,
+                    name: document.getElementById('regName').value,
+                    username: document.getElementById('regUsername').value,
+                    phone: document.getElementById('regPhone').value
+                };
+                
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('regResult', `✅ Registration successful!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('regResult', `❌ Registration failed: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('regResult', `❌ Registration test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testForgotPassword() {
+            try {
+                showResult('forgotResult', '🔄 Testing forgot password...', 'info');
+                
+                const email = document.getElementById('forgotEmail').value;
+                
+                const response = await fetch(`${API_BASE}/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('forgotResult', `✅ Forgot password request sent!\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\nNote: Email sẽ được gửi nếu SMTP được cấu hình đúng`, 'success');
+                } else {
+                    showResult('forgotResult', `❌ Forgot password failed: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('forgotResult', `❌ Forgot password test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            try {
+                showResult('loginResult', '🔄 Testing user login...', 'info');
+                
+                const loginData = {
+                    email: document.getElementById('loginEmail').value,
+                    password: document.getElementById('loginPassword').value
+                };
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('loginResult', `✅ Login successful!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('loginResult', `❌ Login failed: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('loginResult', `❌ Login test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testResetPassword() {
+            try {
+                showResult('resetResult', '🔄 Testing reset password...', 'info');
+                
+                const resetData = {
+                    token: document.getElementById('resetToken').value,
+                    newPassword: document.getElementById('newPassword').value
+                };
+                
+                const response = await fetch(`${API_BASE}/auth/reset-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(resetData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('resetResult', `✅ Reset password successful!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'success');
+                } else {
+                    showResult('resetResult', `❌ Reset password failed: ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 'error');
+                }
+            } catch (error) {
+                showResult('resetResult', `❌ Reset password test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-test server health on page load
+        window.onload = function() {
+            testServerHealth();
+        };
+    </script>
+</body>
+</html>

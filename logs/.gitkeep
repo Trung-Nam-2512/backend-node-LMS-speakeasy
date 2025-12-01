@@ -1,0 +1,10 @@
+# Thư mục logs
+# Các file log sẽ được tạo tự động:
+# - access.log (Morgan HTTP access logs)
+# - api-access.log (Chi tiết API requests/responses)
+# - combined.log (Tất cả logs)
+# - error.log (Chỉ errors)
+# - exceptions.log (Uncaught exceptions)
+# - rejections.log (Unhandled promise rejections)
+# - security.log (Security events)
+
